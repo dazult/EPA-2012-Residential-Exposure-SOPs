@@ -1,0 +1,89 @@
+body{
+    background:#2d2d2d;
+}
+.headerdiv {        
+    padding-top: 20px;
+    padding-left:60px;
+    padding-right:60px;
+    padding-bottom: 10px;
+    background-color:white;
+}
+.contentdiv {
+    padding-top: 0px;
+    padding-left:60px;
+    padding-right:60px;
+    padding-bottom: 10px;
+    background-color:white;
+}
+.footerdiv {
+    padding-top: 30px;
+    padding-left:60px;
+    padding-right:60px;
+    padding-bottom: 30px;
+    background-color:#151515;
+    color:white;
+}
+.filledelement {
+    -webkit-border-radius: 0 0 15px 15px;
+    -moz-border-radius: 0 0 15px 15px;
+    border-radius: 0 0 15px 15px;
+    padding-top: 10px;
+
+
+
+    background-color: #a4d28a; color:black;
+}
+.filledhead {
+    color:white;background-color:#082216;text-align:center;
+    background-image: -moz-linear-gradient(top, #224a3b, #082216);
+    background-image: -ms-linear-gradient(top, #224a3b, #082216);
+    background-image: -webkit-linear-gradient(top, #224a3b, #082216);
+    background-image: -o-linear-gradient(top, #224a3b, #082216);
+    background-image: linear-gradient(top, #224a3b, #082216); 
+    padding:0;
+}
+
+.navbar-inner{
+    background-color:#224a3b;
+    background-image: -moz-linear-gradient(top, #224a3b, #2a2a2a);
+    background-image: -ms-linear-gradient(top, #224a3b, #2a2a2a);
+    background-image: -webkit-linear-gradient(top, #224a3b, #2a2a2a);
+    background-image: -o-linear-gradient(top, #224a3b, #2a2a2a);
+    background-image: linear-gradient(top, #224a3b, #2a2a2a);
+    color:white; 
+}
+
+.navbar-inner .plain{
+    background-color:#2a2a2a;
+    background-image: -moz-linear-gradient(top, #2a2a2a, #2a2a2a);
+    background-image: -ms-linear-gradient(top, #2a2a2a, #2a2a2a);
+    background-image: -webkit-linear-gradient(top, #2a2a2a, #2a2a2a);
+    background-image: -o-linear-gradient(top, #2a2a2a, #2a2a2a);
+    background-image: linear-gradient(top, #2a2a2a, #2a2a2a);
+    color:white; 
+}
+
+.navbar .nav li.dropdown.open > .dropdown-toggle, .navbar .nav li.dropdown.active > .dropdown-toggle, .navbar .nav li.dropdown.open.active > .dropdown-toggle {
+    color: white;
+    background-color: #85a560;
+}
+.navbar .nav > li > a:focus, .navbar .nav > li > a:hover {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    background-color: transparent;
+}
+.navbar .nav > li > a {
+    float: none;
+    padding: 10px 15px;
+    color: rgb(220, 220, 220);
+    text-decoration: none;
+    text-shadow: 0px 1px 0px rgb(80, 80, 80);
+}
+.navbar .nav > li.active > a {
+    float: none;
+    padding: 10px 15px;
+    background-color: #85a560;
+    color: rgb(220, 220, 220);
+    text-decoration: none;
+    text-shadow: 0px 1px 0px rgb(80, 80, 80);
+}

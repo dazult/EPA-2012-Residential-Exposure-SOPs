@@ -1,0 +1,141 @@
+{% load special_tags %}
+{% load i18n %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+    {% include "baseheader.html"%}
+ <script type="text/javascript" charset="utf-8">tables = Array();</script>
+    </head>
+<body>
+<div style="background:#2d2d2d;">
+    <div class="container footerdiv">
+        
+        </div>
+
+</div>
+    
+ 
+<div style="background:#f2f2f2;">
+    <div class="container contentdiv">
+
+        <div class="row">
+            <div class="span12">
+                <form method="post" action="{% url 'sop_calcs.wizard_results_excel' %}">{% csrf_token %}
+                    <input name="_input_data" type="hidden" value="{{ wizard.form.input_data }}">
+                    <input class="btn" type="submit" name="excel" value="{% trans "Download Excel Results" %}"/>  <!--(Not available in full for Indoor, Misting and Impregnated Materials)-->
+                    
+                </form>
+                <form action="" method="post">{% csrf_token %}
+                
+                {{ wizard.management_form }}
+                <button class="btn" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "First Step" %}</button>
+                <button class="btn" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "Previous Step" %}</button>               
+                <a class="btn" href="{% url 'sop_calcs.wizard' %}">New Assessment</a>
+                {% if wizard.form.results.items %}
+                {% for duration, RIs_d in wizard.form.results.items %}
+                <h2>Exposure Duration: {{ duration|capfirst }} Term</h2> <br /> 
+                {% if RIs_d.items %}
+                {% for lifestage, RI_l in RIs_d.items %}
+                <h3>Lifestage: {{ wizard.form.lifestage_displays|dictget:lifestage }}, {{ duration|capfirst }} Term</h3><br />
+
+                <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="aris_{{duration}}_{{lifestage}}_table"> 
+                      <thead>
+                            <tr>
+                                <th>Route</th><th>SOP</th><th>Activity</th><th>Formulation</th><th>Exposure (mg)</th><th>Absorbed Dose (mg per kg bw)</th><th>MOE</th><th>Risk Index</th><th>Aggregate?</th>
+                            </tr>
+                      </thead>    
+                <tbody>                       	
+                {% for RI in RI_l  %} 
+                <tr><td>{{ RI.1|capfirst }}</td><td>{{ RI.4|capfirst }}</td><td>{{ RI.3|capfirst }}</td><td>{{ RI.2|capfirst }}</td><td>{{ RI.6|n_significant_decimals:2 }} </td><td>{{ RI.5|n_significant_decimals:2 }} </td><td>{{ RI.7|n_significant_decimals:2 }} </td><td>{{ RI.0|n_significant_decimals:3 }} </td><td><label class="checkbox inline" for="id_ri_{{ RI.8 }}"><input id="id_ri_{{ RI.8 }}" type="checkbox" value="{{ RI.0 }},{{ RI.7 }}" name="ri_agg" onclick="calculate_agg('{{duration}}', '{{lifestage}}')"></input>       
+    </label></td></tr>    
+                </tbody>
+                {% endfor %} 
+                </table>
+                <script type="text/javascript" charset="utf-8">tables.push({'id':"#aris_{{duration}}_{{lifestage}}_table",'settings':{'bFilter':false,'bSort':true,'bPaginate': false,'bLengthChange': false}});</script>
+                <br />
+                <div id="agg_moe_{{duration}}_{{lifestage}}"></div>
+                <div id="agg_ri_{{duration}}_{{lifestage}}"></div>
+                <br />
+                {% endfor %}
+                {% else %}
+                <h4>No results available. Please ensure at least one of the inputs in non-zero. If the inputs were non-zero please report the bug to epa_sop@dazult.com, naming the scenarios selected and the non-zero input fields. </h4>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <h3>No results available. Please ensure at least one of the inputs in non-zero. If this inputs were non-zero please report the bug to epa_sop@dazult.com, naming the scenarios selected and the non-zero input fields. </h3>
+                {% endif %}
+            <br />
+
+            <button class="btn" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "First Step" %}</button>
+            <button class="btn" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "Previous Step" %}</button>
+            <a class="btn" href="{% url 'sop_calcs.wizard' %}">New Assessment</a>
+            </form>
+                <form method="post" action="{% url 'sop_calcs.wizard_results_excel' %}">{% csrf_token %}
+                    <input name="_input_data" type="hidden" value="{{ wizard.form.input_data }}">
+                    <input class="btn" type="submit" name="excel" value="{% trans "Download Excel Results" %}"/> 
+                </form>
+
+            </div>
+
+        </div>
+
+    
+    </div>
+</div>
+    {% include "basefooter.html" %}
+
+<!-- Javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="{{ STATIC_URL }}js/jquery-1.7.1.min.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}js/datatables/js/jquery.dataTables.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8">
+
+
+$('#agg_ri').html("Aggregate Risk Index: NA" );
+    function calculate_ari(duration, lifestage){
+        var allVals = [];
+        $('#aris_'+ duration + '_'+ lifestage +'_table :checked').each(function(){vals =$(this).val().split(",");  allVals.push(vals[0]);});
+        s = 0.0;
+        for(var i = 0; i < allVals.length; i++){
+            s += 1./parseFloat(allVals[i]);
+        }
+        if(s > 0){
+            s = 1/s;
+            $('#agg_ri_'+ duration + '_'+ lifestage).html("Aggregate Risk Index: " + s.toFixed(4));
+        }
+        else {
+            $('#agg_ri_'+ duration + '_'+ lifestage).html("Aggregate Risk Index: NA" );
+        }
+    }
+
+$('#agg_moe').html("Aggregate MOE: NA" );
+    function calculate_combined_moe(duration, lifestage){
+        var allVals = [];
+        $('#aris_'+ duration + '_'+ lifestage +'_table :checked').each(function(){vals =$(this).val().split(",");  allVals.push(vals[1]);});
+        s = 0.0;
+        for(var i = 0; i < allVals.length; i++){
+            s += 1./parseFloat(allVals[i]);
+        }
+        if(s > 0){
+            s = 1/s;
+            $('#agg_moe_'+ duration + '_'+ lifestage).html("Aggregate MOE: " + s.toFixed(2));
+        }
+        else {
+            $('#agg_moe_'+ duration + '_'+ lifestage).html("Aggregate MOE: NA" );
+        }
+    }
+    
+function calculate_agg(duration, lifestage){
+     calculate_combined_moe(duration, lifestage);
+     calculate_ari(duration, lifestage);    
+}
+
+</script>
+  
+</body>
+</html>
+
+
+
